@@ -20,8 +20,12 @@ steps:
   - name: Dockerize & Publish  
     image: plugins/docker
     settings:
-      username: registry_username
-      password: registry_password
+      username:
+        from_secret: registry_username
+      password:
+        from_secret: registry_password
+      registry:
+        from_secret: registry_host
       repo: metalcloud/frontend
       tags: latest
   
@@ -32,10 +36,27 @@ steps:
     settings:
       token:
         from_secret: telegram_token
-      to: 150678964
+      to: 522942451
+      format: markdown
       message: >
-       {{#success build.status}}
-         Compilacion {{build.number}} exitosa. Buen trabajo!.
-       {{else}}
-         Compilacion {{build.number}} con errores. Por favor revisar.
-       {{/success}}
+        {{#success build.status}}
+        ✅ Compilacion #{{build.number}} de `{{repo.name}}` exitosa. Buen trabajo!.
+
+        📝 Commit por {{commit.author}} en `{{commit.branch}}`:
+
+        ```
+        {{commit.message}}
+        ```
+
+        🌐 {{ build.link }}
+        {{else}}
+        ❌ Compilacion #{{build.number}} de `{{repo.name}}` con errores. Por favor revisar.
+
+        📝 Commit por {{commit.author}} en `{{commit.branch}}`:
+
+        ```
+        {{commit.message}}
+        ```
+
+        🌐 {{ build.link }}
+        {{/success}}
