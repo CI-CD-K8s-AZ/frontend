@@ -45,6 +45,7 @@ steps:
         include:
         - dev
         - qa
+        - prod
 
   - name: Notify
     image: appleboy/drone-telegram
