@@ -36,12 +36,3 @@ steps:
       token:
         from_secret: telegram_token
       to: 150678964
-
-
----
-
-kind: pipeline
-name: default
-type: kubernetes
-trigger:
-  
