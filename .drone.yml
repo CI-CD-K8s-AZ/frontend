@@ -27,9 +27,13 @@ steps:
       to: 150678964
 
 trigger:
+  branch:
+    - master
+    - release
+    - develop
   event:
+  - push
   - promote
-  - commit
   target:
     include:
     - dev
