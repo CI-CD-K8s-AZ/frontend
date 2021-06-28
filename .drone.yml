@@ -34,11 +34,6 @@ trigger:
   event:
   - push
   - promote
-  target:
-    include:
-    - dev
-    - qa
-    - prod
 
 ---
 
