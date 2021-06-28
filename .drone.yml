@@ -21,7 +21,7 @@ steps:
     image: plugins/docker
     settings:
       registry: metalcloud.azurecr.io
-      repo: metalcloud/frontend
+      repo: metalcloud.azurecr.io/frontend
       username:
         from_secret: registry_username
       password:
@@ -36,3 +36,12 @@ steps:
       token:
         from_secret: telegram_token
       to: 150678964
+
+
+---
+
+kind: pipeline
+name: default
+type: kubernetes
+trigger:
+  
