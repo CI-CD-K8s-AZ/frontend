@@ -1,0 +1,52 @@
+kind: pipeline
+name: default
+type: kubernetes
+steps:
+  - name: Build
+    image: node
+    commands:
+      - "npm install"
+      - "mkdir -p dist/webApp"
+      - "npm run build"
+  
+  - name: Analysis
+    image: aosapps/drone-sonar-plugin
+    settings:
+      sonar_host:
+        from_secret: sonar_host
+      sonar_token:
+        from_secret: sonar_token
+  
+  - name: Dockerize & Publish
+    image: node
+    commands:
+      - "npm run test"
+
+  - name: Notify
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: telegram_token
+      to: Cangri_Hack
+      message: >
+       {{#success build.status}}
+         Compilacion {{build.number}} exitosa. Buen trabajo!.
+       {{else}}
+         Compilacion {{build.number}} con errores. Por favor revisar.
+       {{/success}}
+
+---
+
+kind: secret
+name: sonar_host
+get:
+  path: sonar
+  name: host
+
+---
+
+kind: secret
+name: sonar_token
+get:
+  path: sonar
+  name: token
