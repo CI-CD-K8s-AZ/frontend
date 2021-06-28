@@ -29,14 +29,19 @@ steps:
 trigger:
   event:
   - promote
-  - pull_request
+  - commit
+  target:
+    include:
+    - dev
+    - qa
+    - prod
 
 ---
 
 kind: pipeline
 type: kubernetes
 name: deploy
- 
+
 steps:
   - name: Dockerize & Publish
     image: plugins/docker
@@ -50,10 +55,10 @@ steps:
       tags: "v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}"
   
   - name: Deploy
-    image: plugins/ssh
+    image: ubuntu
     settings:
       command:
-        - "echp $DRONE_DEPLOY_TO"
+        - "echo ${DRONE_DEPLOY_TO}"
 
 trigger:
   event:
@@ -62,6 +67,9 @@ trigger:
     include:
     - dev
     - qa
+
+depends_on:
+  - default
 
 ---
 
@@ -82,3 +90,6 @@ trigger:
   - promote
   target:
     - prod
+
+depends_on:
+  - default
