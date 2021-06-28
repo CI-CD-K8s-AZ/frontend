@@ -36,7 +36,7 @@ trigger:
 kind: pipeline
 type: kubernetes
 name: deploy
-
+ 
 steps:
   - name: Dockerize & Publish
     image: plugins/docker
