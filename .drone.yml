@@ -17,6 +17,35 @@ steps:
       sonar_token:
         from_secret: sonar_token
 
+  - name: GIT Tag
+    image: docker:git
+    commands:
+      - git tag v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}
+      - git push origin v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}
+    when:
+      event:
+        - promote
+      target:
+        - prod
+
+  - name: Dockerize & Publish
+    image: plugins/docker
+    settings:
+      registry: metalcloud.azurecr.io
+      repo: metalcloud.azurecr.io/frontend
+      username:
+        from_secret: registry_username
+      password:
+        from_secret: registry_password
+      tags: "v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}"
+    when:
+      event:
+        - promote
+      target:
+        include:
+        - dev
+        - qa
+
   - name: Notify
     image: appleboy/drone-telegram
     when:
@@ -34,61 +63,3 @@ trigger:
   event:
   - push
   - promote
-
----
-
-kind: pipeline
-type: kubernetes
-name: deploy
-
-steps:
-  - name: Dockerize & Publish
-    image: plugins/docker
-    settings:
-      registry: metalcloud.azurecr.io
-      repo: metalcloud.azurecr.io/frontend
-      username:
-        from_secret: registry_username
-      password:
-        from_secret: registry_password
-      tags: "v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}"
-  
-  - name: Deploy
-    image: ubuntu
-    settings:
-      command:
-        - "echo ${DRONE_DEPLOY_TO}"
-
-trigger:
-  event:
-  - promote
-  target:
-    include:
-    - dev
-    - qa
-
-depends_on:
-  - default
-
----
-
-kind: pipeline
-type: kubernetes
-name: deploy-prod
-
-steps:
-
-  - name: GIT Tag
-    image: docker:git
-    commands:
-      - git tag v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}
-      - git push origin v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}
-
-trigger:
-  event:
-  - promote
-  target:
-    - prod
-
-depends_on:
-  - default
