@@ -34,19 +34,3 @@ steps:
        {{else}}
          Compilacion {{build.number}} con errores. Por favor revisar.
        {{/success}}
-
----
-
-kind: secret
-name: sonar_host
-get:
-  path: sonar
-  name: host
-
----
-
-kind: secret
-name: sonar_token
-get:
-  path: sonar
-  name: token
