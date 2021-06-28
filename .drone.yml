@@ -17,8 +17,18 @@ steps:
       sonar_token:
         from_secret: sonar_token
   
+  - name: Dockerize & Publish  
+    image: plugins/docker
+    settings:
+      username: registry_username
+      password: registry_password
+      repo: metalcloud/frontend
+      tags: latest
+  
   - name: Notify
     image: appleboy/drone-telegram
+    when:
+      status: [ success, failure ]
     settings:
       token:
         from_secret: telegram_token

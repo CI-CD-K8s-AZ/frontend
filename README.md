@@ -1,5 +1,7 @@
 # WebApp
 
+[![Build Status](https://drone.metalcloud.cl/api/badges/CI-CD-K8s-AZ/frontend/status.svg)](https://drone.metalcloud.cl/CI-CD-K8s-AZ/frontend)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.1.0.
 
 ## Development server
