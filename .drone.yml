@@ -36,27 +36,4 @@ steps:
     settings:
       token:
         from_secret: telegram_token
-      to: 522942451
-      format: markdown
-      message: >
-        {{#success build.status}}
-        ✅ Compilacion #{{build.number}} de `{{repo.name}}` exitosa. Buen trabajo!.
-
-        📝 Commit por {{commit.author}} en `{{commit.branch}}`:
-
-        ```
-        {{commit.message}}
-        ```
-
-        🌐 {{ build.link }}
-        {{else}}
-        ❌ Compilacion #{{build.number}} de `{{repo.name}}` con errores. Por favor revisar.
-
-        📝 Commit por {{commit.author}} en `{{commit.branch}}`:
-
-        ```
-        {{commit.message}}
-        ```
-
-        🌐 {{ build.link }}
-        {{/success}}
+      to: 150678964
