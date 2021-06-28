@@ -20,13 +20,12 @@ steps:
   - name: Dockerize & Publish  
     image: plugins/docker
     settings:
+      registry: metalcloud.azurecr.io
+      repo: metalcloud/frontend
       username:
         from_secret: registry_username
       password:
         from_secret: registry_password
-      registry:
-        from_secret: registry_host
-      repo: metalcloud/frontend
       tags: latest
   
   - name: Notify
