@@ -7,7 +7,7 @@ steps:
     commands:
       - "npm install"
       - "mkdir -p dist/webApp"
-      - "npm run build"
+      - "npm run build --configuration==${DRONE_SOURCE_BRANCH}"
   
   - name: Analysis
     image: aosapps/drone-sonar-plugin
@@ -16,18 +16,7 @@ steps:
         from_secret: sonar_host
       sonar_token:
         from_secret: sonar_token
-  
-  - name: Dockerize & Publish  
-    image: plugins/docker
-    settings:
-      registry: metalcloud.azurecr.io
-      repo: metalcloud.azurecr.io/frontend
-      username:
-        from_secret: registry_username
-      password:
-        from_secret: registry_password
-      tags: latest
-  
+
   - name: Notify
     image: appleboy/drone-telegram
     when:
@@ -36,3 +25,60 @@ steps:
       token:
         from_secret: telegram_token
       to: 150678964
+
+trigger:
+  event:
+  - promote
+  - pull_request
+
+---
+
+kind: pipeline
+type: kubernetes
+name: deploy
+
+steps:
+  - name: Dockerize & Publish
+    image: plugins/docker
+    settings:
+      registry: metalcloud.azurecr.io
+      repo: metalcloud.azurecr.io/frontend
+      username:
+        from_secret: registry_username
+      password:
+        from_secret: registry_password
+      tags: "v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}"
+  
+  - name: Deploy
+    image: plugins/ssh
+    settings:
+      command:
+        - "echp $DRONE_DEPLOY_TO"
+
+trigger:
+  event:
+  - promote
+  target:
+    include:
+    - dev
+    - qa
+
+---
+
+kind: pipeline
+type: kubernetes
+name: deploy-prod
+
+steps:
+
+  - name: GIT Tag
+    image: docker:git
+    commands:
+      - git tag v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}
+      - git push origin v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}
+
+trigger:
+  event:
+  - promote
+  target:
+    - prod
