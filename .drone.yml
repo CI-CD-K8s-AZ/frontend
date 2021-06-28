@@ -17,17 +17,12 @@ steps:
       sonar_token:
         from_secret: sonar_token
   
-  - name: Dockerize & Publish
-    image: node
-    commands:
-      - "npm run test"
-
   - name: Notify
     image: appleboy/drone-telegram
     settings:
       token:
         from_secret: telegram_token
-      to: Cangri_Hack
+      to: 150678964
       message: >
        {{#success build.status}}
          Compilacion {{build.number}} exitosa. Buen trabajo!.
