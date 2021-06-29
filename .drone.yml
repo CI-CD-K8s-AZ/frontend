@@ -17,17 +17,6 @@ steps:
       sonar_token:
         from_secret: sonar_token
 
-  - name: GIT Tag
-    image: docker:git
-    commands:
-      - git tag v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}
-      - git push origin v1.${DRONE_BUILD_NUMBER}-${DRONE_DEPLOY_TO}
-    when:
-      event:
-        - promote
-      target:
-        - prod
-
   - name: Dockerize & Publish
     image: plugins/docker
     settings:
